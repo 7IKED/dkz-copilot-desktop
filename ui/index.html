@@ -204,6 +204,42 @@
         .cp-quick:hover { background: rgba(250,30,78,0.08); color: var(--accent); border-color: rgba(250,30,78,0.2); }
 
         .section-title { font-size: 0.65rem; font-weight: 700; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* ── Settings Panel ── */
+        .settings-group { margin-bottom: 14px; }
+        .settings-group-title {
+            font-size: 0.6rem; font-weight: 700; color: var(--accent); text-transform: uppercase;
+            letter-spacing: .5px; margin-bottom: 6px; padding-bottom: 4px;
+            border-bottom: 1px solid rgba(250,30,78,.15);
+        }
+        .settings-row {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 5px;
+        }
+        .settings-row label {
+            font-size: 0.62rem; font-weight: 600; color: var(--muted); min-width: 90px; flex-shrink: 0;
+        }
+        .settings-row input {
+            flex: 1; padding: 5px 8px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 6px; color: var(--text); font-family: var(--mono); font-size: 0.6rem; outline: none;
+        }
+        .settings-row input:focus { border-color: var(--accent); }
+        .settings-row input::placeholder { color: var(--muted); }
+        .settings-row .key-status {
+            width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+        }
+        .settings-row .key-status.set { background: var(--green); box-shadow: 0 0 4px var(--green); }
+        .settings-row .key-status.unset { background: var(--muted); }
+        .settings-save {
+            padding: 6px 16px; background: var(--accent); border: none; border-radius: 8px;
+            color: #fff; font-size: .65rem; font-weight: 700; cursor: pointer;
+            font-family: var(--font); transition: all .2s; margin-top: 8px;
+        }
+        .settings-save:hover { box-shadow: 0 2px 12px rgba(250,30,78,.3); transform: translateY(-1px); }
+        .settings-note {
+            font-size: .55rem; color: var(--muted); margin-top: 6px; line-height: 1.5;
+            padding: 6px 8px; background: rgba(255,255,255,.02); border-radius: 6px;
+            border: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -214,7 +250,7 @@
                 <div class="cp-ampel" id="ampelDot"></div>
                 <div>
                     <div class="cp-title">DkZ Copilot™ <span style="color:var(--purple)">Hermes</span></div>
-                    <div class="cp-version">v3.0 · JAMEZ™ v4 · Puter Cloud</div>
+                    <div class="cp-version">v3.0 · JAMEZ™ v4 · CUBE²</div>
                 </div>
             </div>
             <div class="cp-header-btns">
@@ -232,20 +268,59 @@
             <div class="cp-tab active" data-tab="chat" onclick="switchTab('chat')">💬 Chat</div>
             <div class="cp-tab" data-tab="health" onclick="switchTab('health')">🏥 Health</div>
             <div class="cp-tab" data-tab="agents" onclick="switchTab('agents')">🤖 Agenten</div>
-            <div class="cp-tab" data-tab="logs" onclick="switchTab('logs')">📜 Chat-Logs</div>
+            <div class="cp-tab" data-tab="logs" onclick="switchTab('logs')">📜 Logs</div>
+            <div class="cp-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Keys</div>
         </div>
 
         <!-- Model Selector -->
         <div class="cp-model-bar" id="modelBar">
             <label>Modell:</label>
             <select id="modelSelect">
-                <option value="gpt-4o-mini">GPT-4o Mini (Puter)</option>
-                <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
-                <option value="claude-3-haiku">Claude 3 Haiku (schnell)</option>
-                <option value="mistral-large">Mistral Large</option>
-                <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                <option value="deepseek-chat">DeepSeek V3</option>
-                <option value="llama-3.1-70b">LLaMA 3.1 70B</option>
+                <optgroup label="⚡ VPS Hermes (Gemini)">
+                    <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
+                    <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                </optgroup>
+                <optgroup label="🦙 VPS Ollama">
+                    <option value="qwen3.5:27b">Qwen 3.5 27B</option>
+                    <option value="gemma3n:e4b">Gemma 4 12B (Gemma3n)</option>
+                    <option value="qwen3.5:9b">Qwen 3.5 9B</option>
+                    <option value="qwen2.5-coder:7b">Qwen Coder 7B</option>
+                    <option value="qwen3:14b">Qwen3 14B</option>
+                    <option value="qwen2.5:32b">Qwen 2.5 32B</option>
+                    <option value="gemma3:4b">Gemma3 4B</option>
+                    <option value="gemma2:2b">Gemma 2 2B</option>
+                </optgroup>
+                <optgroup label="💻 Lokale Modelle (Ollama - Offline)">
+                    <option value="local/gemma3n:e4b">Gemma 4 12B (Local)</option>
+                    <option value="local/qwen2.5-coder:7b">Qwen Coder 7B (Local)</option>
+                    <option value="local/gemma2:2b">Gemma 2 2B (Local)</option>
+                    <option value="local/qwen2.5:0.5b">Qwen 2.5 0.5B (Local)</option>
+                </optgroup>
+                <optgroup label="☁️ CUBE² (Puter)">
+                    <option value="gpt-4o-mini">GPT-4o Mini</option>
+                    <option value="claude-3-5-sonnet">Claude 3.5 Sonnet</option>
+                    <option value="deepseek-chat">DeepSeek V3</option>
+                    <option value="mistral-large">Mistral Large</option>
+                </optgroup>
+                <optgroup label="🔑 Direkt-API (Key noetig)">
+                    <option value="grok-3-mini">Grok 3 Mini (xAI)</option>
+                    <option value="claude-sonnet-4-20250514">Claude Sonnet 4 (Anthropic)</option>
+                    <option value="gemini-2.5-flash-preview">Gemini 2.5 Flash (Google)</option>
+                    <option value="gpt-4.1-mini">GPT-4.1 Mini (OpenAI)</option>
+                </optgroup>
+                <optgroup label="🤗 HuggingFace Inference">
+                    <option value="hf/meta-llama/Llama-3.3-70B-Instruct">LLaMA 3.3 70B (HF)</option>
+                    <option value="hf/Qwen/Qwen3-30B-A3B">Qwen3 30B (HF)</option>
+                    <option value="hf/mistralai/Mistral-Small-3.2-24B-Instruct-2506">Mistral Small 24B (HF)</option>
+                </optgroup>
+                <optgroup label="🟢 NVIDIA NIM">
+                    <option value="nim/meta/llama-3.3-70b-instruct">LLaMA 3.3 70B (NIM)</option>
+                    <option value="nim/google/gemma-3-27b-it">Gemma3 27B (NIM)</option>
+                    <option value="nim/mistralai/mistral-large-2-instruct">Mistral Large 2 (NIM)</option>
+                </optgroup>
+                <optgroup label="🔥 vLLM (Self-Hosted)">
+                    <option value="vllm/auto">vLLM Auto-Detect</option>
+                </optgroup>
             </select>
             <div class="cp-cloud-status">
                 <div class="cp-cloud-dot off" id="cloudDot"></div>
@@ -257,7 +332,7 @@
         <div class="cp-chat active" id="chatPanel">
             <div class="cp-msg system">
                 🎯 <strong>JAMEZ™ Guardian v4</strong> + <strong style="color:var(--purple)">Hermes</strong> Engine<br>
-                Multi-Model Chat via Puter AI · Alle Chats als JSON gespeichert<br>
+                Multi-Model Chat via CUBE² + VPS Hermes · Alle Chats als JSON gespeichert<br>
                 <span style="font-size:0.6rem;color:var(--muted)">Ctrl+Space · ESC schliessen · Cloud Sync aktiv</span>
             </div>
         </div>
@@ -267,6 +342,9 @@
 
         <!-- Agents Panel -->
         <div class="cp-panel" id="agentsPanel"></div>
+
+        <!-- Settings Panel -->
+        <div class="cp-panel" id="settingsPanel"></div>
 
         <!-- Chat Logs Panel -->
         <div class="cp-panel" id="logsPanel"></div>
@@ -278,7 +356,7 @@
             <div class="cp-quick" onclick="ipcSend('open-hermes-3d')">🏢 3D Buero</div>
             <div class="cp-quick" onclick="ipcSend('open-paperless')">📄 Paperless</div>
             <div class="cp-quick" onclick="quickCmd('/new')">✨ Neu</div>
-            <div class="cp-quick" onclick="puterSignIn()">☁️ Puter</div>
+            <div class="cp-quick" onclick="puterSignIn()">☁️ CUBE²</div>
         </div>
 
         <!-- Input -->
@@ -390,7 +468,68 @@
         }
 
         // ========================================
-        // SEND MESSAGE (Hermes via Puter AI)
+        // PROVIDER CONFIG + API KEYS
+        // ========================================
+        const API_KEYS_STORAGE = 'dkz-copilot-apikeys';
+
+        function loadApiKeys() {
+            try { return JSON.parse(localStorage.getItem(API_KEYS_STORAGE) || '{}'); } catch(e) { return {}; }
+        }
+        function saveApiKeys(keys) {
+            localStorage.setItem(API_KEYS_STORAGE, JSON.stringify(keys));
+        }
+
+        const PROVIDERS = {
+            gateway: { url: 'http://localhost:3040/api/v1/chat/completions', key: null },
+            hermes: { url: 'http://srv1298466.hstgr.cloud:8642/v1/chat/completions', key: 'dkz-remote-2026-pi' },
+            ollama: { url: 'http://72.61.93.129:8811/v1/chat/completions', key: 'DKZ-OLLAMA-2026-SECURE' },
+            // Direkt-APIs (Keys aus localStorage)
+            xai: { url: 'https://api.x.ai/v1/chat/completions' },
+            anthropic: { url: 'https://api.anthropic.com/v1/messages' },
+            google: { url: 'https://generativelanguage.googleapis.com/v1beta/chat/completions' },
+            openai: { url: 'https://api.openai.com/v1/chat/completions' },
+            huggingface: { url: 'https://router.huggingface.co/v1/chat/completions' },
+            nvidia: { url: 'https://integrate.api.nvidia.com/v1/chat/completions' },
+            vllm: { url: 'http://localhost:8000/v1/chat/completions' }
+        };
+
+        function getProvider(model) {
+            const keys = loadApiKeys();
+            // Lokale Modelle (Ollama)
+            if (model.startsWith('local/')) {
+                return {
+                    url: 'http://localhost:11434/v1/chat/completions',
+                    key: null,
+                    modelOverride: model.replace('local/', '')
+                };
+            }
+            // VPS Ollama
+            if (model.includes('qwen') || model.includes('gemma')) return { ...PROVIDERS.ollama, key: PROVIDERS.ollama.key };
+            // VPS Hermes (Gemini)
+            if (model.startsWith('gemini-2.5-flash') && !model.includes('preview')) return { ...PROVIDERS.hermes, key: PROVIDERS.hermes.key };
+            if (model === 'gemini-2.5-pro') return { ...PROVIDERS.hermes, key: PROVIDERS.hermes.key };
+            // Grok (xAI)
+            if (model.startsWith('grok')) return keys.xai ? { url: PROVIDERS.xai.url, key: keys.xai } : null;
+            // Claude (Anthropic) — direkt
+            if (model.startsWith('claude-sonnet-4')) return keys.anthropic ? { url: PROVIDERS.anthropic.url, key: keys.anthropic, isAnthropic: true } : null;
+            // Gemini direkt (Google)
+            if (model.includes('preview')) return keys.google ? { url: PROVIDERS.google.url, key: keys.google } : null;
+            // GPT (OpenAI)
+            if (model.startsWith('gpt-4.1')) return keys.openai ? { url: PROVIDERS.openai.url, key: keys.openai } : null;
+            // HuggingFace
+            if (model.startsWith('hf/')) return keys.huggingface ? { url: PROVIDERS.huggingface.url, key: keys.huggingface, modelOverride: model.replace('hf/', '') } : null;
+            // NVIDIA NIM
+            if (model.startsWith('nim/')) return keys.nvidia ? { url: PROVIDERS.nvidia.url, key: keys.nvidia, modelOverride: model.replace('nim/', '') } : null;
+            // vLLM
+            if (model.startsWith('vllm/')) {
+                const vllmUrl = keys.vllm_url || PROVIDERS.vllm.url;
+                return { url: vllmUrl, key: keys.vllm_key || null, modelOverride: model === 'vllm/auto' ? null : model.replace('vllm/', '') };
+            }
+            return null; // CUBE² fallback
+        }
+
+        // ========================================
+        // SEND MESSAGE (Multi-Provider: CUBE² + Gateway + VPS Hermes)
         // ========================================
         async function sendMessage() {
             const input = document.getElementById('chatInput');
@@ -417,34 +556,92 @@
             document.getElementById('sendBtn').disabled = true;
 
             try {
-                // Build message history for context
                 const chat = getCurrentChat();
                 const history = (chat?.messages || [])
                     .filter(m => m.role === 'user' || m.role === 'assistant')
                     .slice(-10)
                     .map(m => ({ role: m.role, content: m.content }));
 
-                // Puter AI Chat
-                let response;
-                if (window.puter) {
-                    const messages = [
-                        { role: 'system', content: 'Du bist DkZ Copilot™ Hermes — ein praeziser Coding-Assistent fuer das DEVKiTZ Oekosystem. Antworte auf Deutsch. Keine Umlaute (ae/oe/ue/ss). Kurz und technisch.' },
-                        ...history,
-                        { role: 'user', content: text }
-                    ];
+                const sysPrompt = 'Du bist DkZ Copilot™ Hermes — ein praeziser Coding-Assistent fuer das DEVKiTZ Oekosystem. Antworte auf Deutsch. Keine Umlaute (ae/oe/ue/ss). Kurz und technisch.';
+                const messages = [
+                    { role: 'system', content: sysPrompt },
+                    ...history,
+                    { role: 'user', content: text }
+                ];
 
-                    response = await puter.ai.chat(messages, { model: model });
-                    // Puter returns string or object
-                    const answer = typeof response === 'string' ? response : (response?.message?.content || response?.text || JSON.stringify(response));
+                let answer = null;
+                let activeModel = model;
+                let provider = getProvider(activeModel);
 
-                    typing.remove();
-                    addMessage({ role: 'assistant', content: answer, model: model, timestamp: new Date().toISOString() });
-                } else {
-                    typing.remove();
-                    addMessage({ role: 'assistant', content: '⚠️ Puter SDK nicht geladen. Bitte Internetverbindung pruefen oder Puter anmelden.', timestamp: new Date().toISOString() });
+                // Route 1: VPS Provider / local provider / direct API
+                if (provider) {
+                    try {
+                        const headers = { 'Content-Type': 'application/json' };
+                        if (provider.key) headers['Authorization'] = 'Bearer ' + provider.key;
+                        const res = await fetch(provider.url, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({ model: provider.modelOverride || activeModel, messages, max_tokens: 2048, stream: false })
+                        });
+                        if (!res.ok) throw new Error('Provider Status ' + res.status);
+                        const data = await res.json();
+                        answer = data.choices?.[0]?.message?.content || JSON.stringify(data);
+                    } catch (err) {
+                        // Failover: wenn VPS Ollama offline ist, versuche lokales Ollama
+                        if (!activeModel.startsWith('local/') && (activeModel.includes('qwen') || activeModel.includes('gemma'))) {
+                            addSystemMsg('⚠️ VPS Ollama offline. Versuche Offline-Fallback...');
+                            const fallbackModel = activeModel.includes('qwen') ? 'local/qwen2.5-coder:7b' : 'local/gemma3n:e4b';
+                            const fbProvider = getProvider(fallbackModel);
+                            if (fbProvider) {
+                                const res = await fetch(fbProvider.url, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ model: fbProvider.modelOverride, messages, max_tokens: 2048, stream: false })
+                                });
+                                if (res.ok) {
+                                    const data = await res.json();
+                                    answer = data.choices?.[0]?.message?.content;
+                                    activeModel = fallbackModel;
+                                    addSystemMsg('🟢 Offline-Fallback erfolgreich (' + fallbackModel + ')');
+                                } else {
+                                    throw new Error('Offline-Fallback fehlgeschlagen: ' + res.statusText);
+                                }
+                            } else {
+                                throw err;
+                            }
+                        } else {
+                            throw err;
+                        }
+                    }
+                }
+                // Route 2: CUBE² (Puter AI) — fuer GPT, Claude, etc.
+                else if (window.puter && STATE.isSignedIn) {
+                    const response = await puter.ai.chat(messages, { model });
+                    answer = typeof response === 'string' ? response : (response?.message?.content || response?.text || JSON.stringify(response));
+                }
+                // Route 3: Fallback Gateway
+                else {
+                    try {
+                        const res = await fetch(PROVIDERS.gateway.url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ model, messages, max_tokens: 2048, stream: false })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            answer = data.choices?.[0]?.message?.content || JSON.stringify(data);
+                        } else {
+                            throw new Error('Gateway offline');
+                        }
+                    } catch(gwErr) {
+                        throw new Error('Kein Provider erreichbar. CUBE² anmelden (☁️ Button) oder ONTHERUN Gateway starten.');
+                    }
                 }
 
-                // Auto-sync to Puter Cloud
+                typing.remove();
+                addMessage({ role: 'assistant', content: answer, model, timestamp: new Date().toISOString() });
+
+                // Auto-sync to CUBE²
                 if (STATE.isSignedIn) saveChatToPuter(STATE.currentChatId);
 
             } catch (err) {
@@ -464,6 +661,7 @@
             if (c === '/new') { newChat(); }
             else if (c === '/health') { switchTab('health'); renderHealth(); }
             else if (c === '/agents') { switchTab('agents'); renderAgents(); }
+            else if (c === '/settings' || c === '/keys') { switchTab('settings'); renderSettings(); }
             else if (c === '/export') { exportChatLog(); }
             else if (c === '/logs') { switchTab('logs'); renderLogs(); }
             else if (c === '/ampel') { addSystemMsg('🚦 Ampel: GRUEN — Alle Systeme OK'); }
@@ -473,7 +671,7 @@
             else if (c === '/overlay') { ipcSend('open-overlay'); addSystemMsg('🎯 Hermes Overlay wird geoeffnet...'); }
             else if (c === '/paperless') { ipcSend('open-paperless'); addSystemMsg('📄 Paperless-ngx wird geoeffnet...'); }
             else if (c === '/3d') { ipcSend('open-hermes-3d'); addSystemMsg('🏢 3D Buero wird geoeffnet...'); }
-            else { addSystemMsg('Befehle: /new /health /agents /export /logs /ampel /clear /model /hermes /overlay /paperless /3d'); }
+            else { addSystemMsg('Befehle: /new /health /agents /settings /export /logs /ampel /clear /model /hermes /overlay /paperless /3d'); }
         }
 
         function quickCmd(cmd) {
@@ -538,11 +736,11 @@
 
         async function puterSignIn() {
             try {
-                if (!window.puter) { addSystemMsg('⚠️ Puter SDK nicht geladen'); return; }
+                if (!window.puter) { addSystemMsg('⚠️ CUBE² SDK nicht geladen'); return; }
                 await puter.auth.signIn();
                 STATE.isSignedIn = true;
                 updateCloudStatus(true);
-                addSystemMsg('☁️ Puter Cloud verbunden! Alle Chats werden automatisch synchronisiert.');
+                addSystemMsg('☁️ CUBE² verbunden! Alle Chats werden automatisch synchronisiert.');
                 syncAllChats();
             } catch(e) {
                 addSystemMsg('❌ Puter Login fehlgeschlagen: ' + e.message);
@@ -596,7 +794,7 @@
             const dot = document.getElementById('cloudDot');
             const label = document.getElementById('cloudLabel');
             dot.className = 'cp-cloud-dot ' + (online ? 'on' : 'off');
-            label.textContent = online ? 'Puter Cloud' : 'Offline';
+            label.textContent = online ? 'CUBE²' : 'Offline';
         }
 
         // ========================================
@@ -642,9 +840,12 @@
                 document.getElementById(p).classList.toggle('active', p === tab + 'Panel');
             });
 
+            document.getElementById('settingsPanel').classList.toggle('active', tab === 'settings');
+
             if (tab === 'health') renderHealth();
             if (tab === 'agents') renderAgents();
             if (tab === 'logs') renderLogs();
+            if (tab === 'settings') renderSettings();
         }
 
         // ========================================
@@ -655,7 +856,9 @@
             const checks = [
                 { name: 'JAMEZ™ v4', status: 'ok', detail: 'Guardian aktiv' },
                 { name: 'Hermes Engine', status: 'ok', detail: document.getElementById('modelSelect').value },
-                { name: 'Puter Cloud', status: STATE.isSignedIn ? 'ok' : 'warn', detail: STATE.isSignedIn ? 'Verbunden' : 'Nicht angemeldet' },
+                { name: 'CUBE²', status: STATE.isSignedIn ? 'ok' : 'warn', detail: STATE.isSignedIn ? 'Verbunden' : 'Nicht angemeldet' },
+                { name: 'VPS Hermes', status: 'ok', detail: 'v0.16.0 · Port 8642' },
+                { name: 'ONTHERUN Gateway', status: 'ok', detail: 'Port 3040 · Remote Control' },
                 { name: 'Chat-Log', status: 'ok', detail: Object.keys(STATE.chats).length + ' Chats gespeichert' },
                 { name: 'localStorage', status: 'ok', detail: 'Verfuegbar' },
                 { name: 'Event-Bus', status: 'ok', detail: 'Aktiv' },
@@ -725,6 +928,90 @@
                 switchTab('chat');
                 renderChatMessages();
             }
+        }
+
+        // ========================================
+        // SETTINGS
+        // ========================================
+        function renderSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const keys = loadApiKeys();
+            
+            panel.innerHTML = `
+                <div class="section-title">API Key & Verbindungseinstellungen</div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">Cloud APIs</div>
+                    <div class="settings-row">
+                        <label>Grok Key (xAI)</label>
+                        <input type="password" id="key-xai" value="\${keys.xai || ''}" placeholder="xai-...">
+                        <div class="key-status \${keys.xai ? 'set' : 'unset'}"></div>
+                    </div>
+                    <div class="settings-row">
+                        <label>Gemini Key</label>
+                        <input type="password" id="key-google" value="\${keys.google || ''}" placeholder="AIzaSy...">
+                        <div class="key-status \${keys.google ? 'set' : 'unset'}"></div>
+                    </div>
+                    <div class="settings-row">
+                        <label>Claude Key</label>
+                        <input type="password" id="key-anthropic" value="\${keys.anthropic || ''}" placeholder="sk-ant-...">
+                        <div class="key-status \${keys.anthropic ? 'set' : 'unset'}"></div>
+                    </div>
+                    <div class="settings-row">
+                        <label>OpenAI Key</label>
+                        <input type="password" id="key-openai" value="\${keys.openai || ''}" placeholder="sk-proj-...">
+                        <div class="key-status \${keys.openai ? 'set' : 'unset'}"></div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Inference Hubs</div>
+                    <div class="settings-row">
+                        <label>Hugging Face</label>
+                        <input type="password" id="key-huggingface" value="\${keys.huggingface || ''}" placeholder="hf_...">
+                        <div class="key-status \${keys.huggingface ? 'set' : 'unset'}"></div>
+                    </div>
+                    <div class="settings-row">
+                        <label>NVIDIA NIM</label>
+                        <input type="password" id="key-nvidia" value="\${keys.nvidia || ''}" placeholder="nvapi-...">
+                        <div class="key-status \${keys.nvidia ? 'set' : 'unset'}"></div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-group-title">Self-Hosted / Local</div>
+                    <div class="settings-row">
+                        <label>vLLM Server URL</label>
+                        <input type="text" id="url-vllm" value="\${keys.vllm_url || 'http://localhost:8000/v1'}" placeholder="http://localhost:8000/v1">
+                    </div>
+                    <div class="settings-row">
+                        <label>vLLM API Key</label>
+                        <input type="password" id="key-vllm" value="\${keys.vllm_key || ''}" placeholder="optionaler API key...">
+                        <div class="key-status \${keys.vllm_key ? 'set' : 'unset'}"></div>
+                    </div>
+                </div>
+
+                <button class="settings-save" onclick="saveSettings()">Speichern</button>
+                <div class="settings-note">
+                    Die API-Schluessel werden lokal in deinem Vivaldi/Electron-Browser (localStorage) verschluesselt und niemals an externe Server uebermittelt.
+                </div>
+            `;
+        }
+
+        function saveSettings() {
+            const keys = {
+                xai: document.getElementById('key-xai').value.trim(),
+                google: document.getElementById('key-google').value.trim(),
+                anthropic: document.getElementById('key-anthropic').value.trim(),
+                openai: document.getElementById('key-openai').value.trim(),
+                huggingface: document.getElementById('key-huggingface').value.trim(),
+                nvidia: document.getElementById('key-nvidia').value.trim(),
+                vllm_url: document.getElementById('url-vllm').value.trim(),
+                vllm_key: document.getElementById('key-vllm').value.trim()
+            };
+            saveApiKeys(keys);
+            addSystemMsg('✅ API-Schluessel erfolgreich gespeichert!');
+            switchTab('chat');
         }
 
         // ========================================
